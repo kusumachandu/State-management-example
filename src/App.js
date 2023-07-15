@@ -15,6 +15,12 @@ const users = [
     counter: 0,
     active: false,
   },
+  {
+    id: 3,
+    name: 'pandu',
+    counter: 0,
+    active: false
+  }
 ];
 function App() {
   return (
