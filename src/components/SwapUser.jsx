@@ -6,52 +6,50 @@ export default function SwapUser({users}) {
   const [usersData, setUsersData] = useState(users);
   
   const [count, setCount] = useState(activeUser.counter);
-  useEffect(() => {
-    const activeUser = users.find(user => user.active);
-    console.log(activeUser);
-  }, [usersData, users])
-  
   function swapUser() {
-    setUsersData((prevUsers) => {
+    setUsersData(prevUsers => {
       const updatedUsers = [...prevUsers];
-      const activeUser = updatedUsers.find(user => user.active);
-      const nextUserIndex = activeUser.id < users.length ? activeUser.id % users.length + 1 : activeUser.id - 1;
-      console.log(nextUserIndex);
-      const nextUser = updatedUsers.find(user => user.id === nextUserIndex);
+    const activeUserIndex = updatedUsers.findIndex(user => user.active);
 
-      if(activeUser && nextUser) {
-        activeUser.active = false;
-        nextUser.active = true;
-      }
-
-      console.log(count);
-
+    if (activeUserIndex !== -1) {
+      const nextUserIndex = (activeUserIndex + 1) % updatedUsers.length;
+      updatedUsers[activeUserIndex].active = false;
+      updatedUsers[nextUserIndex].active = true;
+    }
       return updatedUsers;
     });
-
   }
 
-
-  function increment(){
-
-    setCount(count + 1);
-    setUsersData(prev => {
-      const updatedUsers = [...prev];
-
-      const activeUser = updatedUsers.find(user => user.active);
-
-      if(activeUser) {
-        activeUser.counter = count;
-      }
-
-      console.log(activeUser)
-      return updatedUsers
-    })
+  function increment() {
+    setCount(prevCount => prevCount + 1);
+    setUsersData(prevUsers => {
+      const updatedUsers = prevUsers.map(user => {
+        if (user.active) {
+          return { ...user, counter: user.counter + 1 };
+        }
+        return user;
+      });
+      return updatedUsers;
+    });
   }
 
   function decrement() {
-    setCount(count - 1);
+    setCount(prevCount => prevCount - 1);
+    setUsersData(prevUsers => {
+      const updatedUsers = prevUsers.map(user => {
+        if (user.active) {
+          return { ...user, counter: user.counter - 1 };
+        }
+        return user;
+      });
+      return updatedUsers;
+    });
   }
+
+  useEffect(() => {
+    const activeUser = usersData.find(user => user.active);
+    setCount(activeUser.counter);
+  }, [usersData]);
 
   return (
     <div className='py-10'>
